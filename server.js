@@ -15,18 +15,26 @@ app.get('/weather', async (request, response, next) => {
 
   let lat = request.query.lat;
   let lon = request.query.lon;
+  if (!lat || !lon) {
+    response.status(400).send('Bad Request');
+  }
 
-  // what location or query to I need to make for weatherbit API?
-  let url = `https://api.weatherbit.io/v2.0/current?key=${WEATHER_API_KEY}&lat=${lat}&lon=${lon}`;
+  try {
+    // what location or query to I need to make for weatherbit API?
 
-  let weatherResponse = await axios({
-    method: "GET",
-    url: url,
-  });
-  let weatherData = weatherResponse.data.data;
-  response.send(weatherData);
+    // what do I send back to the client.
+    let url = `https://api.weatherbit.io/v2.0/current?key=${WEATHER_API_KEY}&lat=${lat}&lon=${lon}`;
+  
+    let weatherResponse = await axios({
+      method: "GET",
+      url: url,
+    });
+    let weatherData = weatherResponse.data.data;
+    response.send(weatherData);
+  } catch (e) {
+    response.status(400).send('Bad Request');
+  }
 
-  // what do I send back to the client.
 });
 
 class Forecast {
